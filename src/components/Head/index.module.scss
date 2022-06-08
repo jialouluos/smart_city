@@ -1,0 +1,27 @@
+.head_box {
+    height: 70px;
+    width: 100%;
+    display: flex;
+    position: absolute;
+    top: 0px;
+    z-index: 3;
+    align-items: center;
+    justify-content: center;
+
+    .title_box {
+        width: 50%;
+        height: 100%;
+        background-color: #182a43;
+        opacity: 0.4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        h1 {
+            letter-spacing: 3px;
+            color: #d2d8e2;
+            user-select: none;
+            margin: 0;
+        }
+    }
+}

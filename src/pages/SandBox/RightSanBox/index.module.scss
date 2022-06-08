@@ -1,0 +1,13 @@
+.right_box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    right: 0px;
+    opacity: 0.4;
+    height: 100%;
+    width: 25%;
+    background-color: #ff00ff;
+}
