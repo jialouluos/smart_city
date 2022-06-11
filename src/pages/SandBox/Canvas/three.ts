@@ -1,19 +1,21 @@
 import * as  THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'three/examples/jsm/libs/stats.module.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import RecedingFence from '../../../shader/渐隐围墙';
 import Track from './disposeManage'
 let renderer!: THREE.WebGLRenderer;
 let camera!: THREE.PerspectiveCamera;
 let scene!: THREE.Scene;
 // let textureLoader!: THREE.TextureLoader;
 let envmapLoader !: THREE.CubeTextureLoader;
-let GltfLoader: GLTFLoader;
+// let GltfLoader: GLTFLoader;
 let dirlight!: THREE.DirectionalLight;
 let controls!: OrbitControls;
 let stats!: Stats;
 let animateId: number;
 const track: Track = new Track();
+const time: { value: number } = { value: 0.0 };
 const getAspect = (el: HTMLElement): number => el.clientWidth / el.clientHeight;
 const init = (el: HTMLElement) => {
     const initEnvironmentMap = () => {
@@ -50,11 +52,20 @@ const init = (el: HTMLElement) => {
         scene.add(dirlight);
     }
     const initModel = () => {
-        GltfLoader = new GLTFLoader();
-        GltfLoader.loadAsync('./model/model.glb').then(res => {
-            scene.add(res.scene);
-            res.scene.scale.set(1.5, 1.5, 1.5)
-        })
+        // GltfLoader = new GLTFLoader();
+        // GltfLoader.loadAsync('./model/model.glb').then(res => {
+        //     scene.add(res.scene);
+        //     res.scene.scale.set(1.5, 1.5, 1.5)
+        // })
+        const recedingFence = new RecedingFence(time)
+        const data = [0, 0,
+            6, 0,
+            6, 8,
+            4, 12,
+            2, 7,
+            0, 0
+        ]
+        scene.add(recedingFence.createMesh(data, 8, new THREE.Color("#ff0000"))!)
     }
     const initControls = () => {
         controls = new OrbitControls(camera, renderer.domElement);
@@ -67,6 +78,7 @@ const init = (el: HTMLElement) => {
     const animate = () => {
         renderer.render(scene, camera);
         controls.update();
+        time.value += 0.1;
         animateId = requestAnimationFrame(animate)
     }
     const resizeEvent = (e: Event) => {
