@@ -97,7 +97,6 @@ export default class Main {
                 antialias: true
             }
         }
-
         this.mousePos = new THREE.Vector2(-10000, -10000);//鼠标初始化
         this.$gsap = gsap;
         this.time = {
@@ -111,7 +110,6 @@ export default class Main {
         this.modelLoaderByDraco = new GLTFLoader()
         this.modelLoaderByDraco.setDRACOLoader(draco);//创建Draco加载器
     }
-
     init() {
         this.createScene();
         this.createCamera('PerspectiveCamera');

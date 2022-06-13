@@ -2,13 +2,11 @@
 import * as  THREE from 'three';
 import Main from './Main';
 import RecedingFence from './shader/渐隐围墙';
-type NMesh = (THREE.Mesh | THREE.Group) & { material: THREE.MeshStandardMaterial, geometry: THREE.BufferGeometry }
-
 export default class City extends Main {
-    ModelManageGroup!: Map<string, NMesh>
+    ModelManageGroup!: Map<string, THREE.Mesh>
     constructor(el: HTMLDivElement, debug: boolean) {
         super(el, debug);
-        this.ModelManageGroup = new Map<string, NMesh>();
+        this.ModelManageGroup = new Map<string, THREE.Mesh>();
     }
     init(): void {
         this.createScene('', { gui: true, stats: true });
@@ -49,16 +47,16 @@ export default class City extends Main {
 
     }
     correctModel() {
-        this.ModelManageGroup.get('river')!.position!.y += 0.9;
+        this.ModelManageGroup.get('river')!.position.y += 0.9;
     }
     BindModelToMap() {
-        this.ModelManageGroup.set(`ground`, this.scene.getObjectByName(`地面`) as NMesh)
-        this.ModelManageGroup.set(`river`, this.scene.getObjectByName(`河流`) as NMesh)
-        this.ModelManageGroup.set(`build`, this.scene.getObjectByName(`楼房`) as NMesh)
-        this.ModelManageGroup.set(`上海中心大厦`, this.scene.getObjectByName(`上海中心大厦`) as NMesh)
-        this.ModelManageGroup.set(`东方明珠`, this.scene.getObjectByName(`东方明珠`) as NMesh)
-        this.ModelManageGroup.set(`环球金融中心`, this.scene.getObjectByName(`环球金融中心`) as NMesh)
-        this.ModelManageGroup.set(`金茂大厦`, this.scene.getObjectByName(`金茂大厦`) as NMesh)
+        this.ModelManageGroup.set(`ground`, this.scene.getObjectByName(`地面`) as THREE.Mesh)
+        this.ModelManageGroup.set(`river`, this.scene.getObjectByName(`河流`) as THREE.Mesh)
+        this.ModelManageGroup.set(`build`, this.scene.getObjectByName(`楼房`) as THREE.Mesh)
+        this.ModelManageGroup.set(`上海中心大厦`, this.scene.getObjectByName(`上海中心大厦`) as THREE.Mesh)
+        this.ModelManageGroup.set(`东方明珠`, this.scene.getObjectByName(`东方明珠`) as THREE.Mesh)
+        this.ModelManageGroup.set(`环球金融中心`, this.scene.getObjectByName(`环球金融中心`) as THREE.Mesh)
+        this.ModelManageGroup.set(`金茂大厦`, this.scene.getObjectByName(`金茂大厦`) as THREE.Mesh)
         console.log(this.scene)
     }
     loadModel() {
