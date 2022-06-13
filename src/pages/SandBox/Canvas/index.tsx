@@ -1,16 +1,16 @@
 import React, { useRef, useEffect } from 'react'
 import style from './index.module.scss'
-import init from './three'
+import City from '../../../three/three'
 
 export default function Canvas() {
     const CanvasRef = useRef<HTMLDivElement>(null)
     useEffect(() => {
         if (!CanvasRef.current || !CanvasRef) return;
-        const ThreeManage = init(CanvasRef.current!);
-        ThreeManage.draw();
+        const city = new City(CanvasRef.current!, true);
+        city.init();
         return () => {
             console.log("即将销毁ing");
-            ThreeManage.dispose();
+            city.dispose();
         }
     }, [CanvasRef])
 
