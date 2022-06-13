@@ -40,7 +40,6 @@ export default class City extends Main {
             model.position.x -= box.min.x;
             model.position.y -= box.min.y;
             model.position.z -= box.min.z;
-            console.log("纱布聪")
         })
         this.BindModelToMap();
         this.correctModel();
