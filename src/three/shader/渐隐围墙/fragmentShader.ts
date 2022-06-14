@@ -1,4 +1,4 @@
-export const RecedingEnclosure_fragmentShader = /* glsl */`
+const RecedingEnclosure_fragmentShader = /* glsl */`
 uniform vec3 diffuse;
 uniform vec3 emissive;
 uniform float opacity;
@@ -138,3 +138,4 @@ void main() {
 	#include <dithering_fragment>
 }
 `;
+export default RecedingEnclosure_fragmentShader

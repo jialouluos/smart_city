@@ -1,30 +1,31 @@
 import * as THREE from 'three'
-import GLSLLib from '../../GLSLLib'
+import ShaderLib from '../../libs/ShaderLib'
+
+interface IRecedingFence {
+    scale?: number,
+    u_a?: number,
+    u_b?: number,
+    u_n?: number,
+    speed?: number,
+    animateFlag?: boolean,
+    height?: number,
+    color?: THREE.Color | string,
+    name: string
+}
 /**
- * @ 渐隐围墙_shader特特效
+ * @渐隐围墙_shader特特效
  */
 export default class RecedingFence {
-    Params!: Record<string, any>
     time: {
         value: number
     }
-    geometry!: THREE.BufferGeometry;
-    material!: THREE.ShaderMaterial;
-    constructor(time: { value: number }, scale: number = 1.3, u_a: number = 0, u_b: number = 0, u_n: number = 2.8, speed: number = 1.0, animateFlag: boolean = false) {
-        this.Params = {
-            scale,
-            u_a,
-            u_b,
-            u_n,
-            speed,
-            animateFlag,
-        }
+    constructor(time: { value: number },) {
         this.time = time;
     }
-    createMesh(data: number[], height: number, color: THREE.Color) {
-        this.geometry = new THREE.BufferGeometry();
-        const Points = [];
-        // const Opacity = [];
+    createMesh(data: number[], option: IRecedingFence = { scale: 1.3, u_a: 0, u_b: 0, u_n: 2.8, speed: 1.0, animateFlag: false, height: 8, color: new THREE.Color("#ff0000"), name: "" }) {
+        const geometry = new THREE.BufferGeometry();
+        let { scale, u_a, u_b, u_n, speed, animateFlag, height, color, name } = option;
+        const points = [];
         const uv = [];
         for (let i = 2; i < data.length; i += 2) {
             const point_1 = [data[i - 2], height, data[i - 1]]
@@ -33,26 +34,28 @@ export default class RecedingFence {
             const point_4 = [data[i - 2], height, data[i - 1]]
             const point_5 = [data[i], 0, data[i + 1]]
             const point_6 = [data[i], height, data[i + 1]]
-            Points.push(point_1, point_2, point_3, point_4, point_5, point_6);
-            // Opacity.push(1, 0, 0, 1, 0, 1)
+            points.push(point_1, point_2, point_3, point_4, point_5, point_6);
             uv.push(0, 1, 0, 0, 1, 0);
             uv.push(0, 1, 1, 0, 1, 1);
         }
-        if (Points.length < 3) return;
-        this.geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(Points.flat()), 3));
-        this.geometry.setAttribute("uv", new THREE.BufferAttribute(new Float32Array(uv), 2))
-        this.geometry.computeVertexNormals()
-        this.material = new THREE.ShaderMaterial({
-            vertexShader: GLSLLib.RecedingEnclosure.vs,
-            fragmentShader: GLSLLib.RecedingEnclosure.fs,
-            uniforms: { ...THREE.ShaderLib.lambert.uniforms, u_scale: { value: this.Params.scale }, u_a: { value: this.Params.u_a }, u_b: { value: this.Params.u_b }, u_n: { value: this.Params.u_n }, u_Time: this.time, u_Speed: { value: this.Params.speed }, u_animateFlag: { value: this.Params.animateFlag ? 1.0 : 0.0 } },
+        typeof color === "string" && (color = new THREE.Color(color));
+        if (points.length < 3) return;
+        geometry.setAttribute("position", new THREE.BufferAttribute(new Float32Array(points.flat() as ArrayLike<number>), 3))
+        geometry.setAttribute("uv", new THREE.BufferAttribute(new Float32Array(uv), 2))
+        geometry.computeVertexNormals()
+        const material = new THREE.ShaderMaterial({
+            vertexShader: ShaderLib.RecedingEnclosure.vs,
+            fragmentShader: ShaderLib.RecedingEnclosure.fs,
+            uniforms: { ...THREE.ShaderLib.lambert.uniforms, u_scale: { value: scale }, u_a: { value: u_a }, u_b: { value: u_b }, u_n: { value: u_n }, u_Time: this.time, u_Speed: { value: speed }, u_animateFlag: { value: animateFlag ? 1.0 : 0.0 } },
             side: THREE.DoubleSide, //两面可见
             transparent: true, //需要开启透明度计算，否则着色器透明度设置无效
             depthTest: false,
         })
-        this.material.lights = true;
-        this.material.uniforms.diffuse.value = color
-        const mesh = new THREE.Mesh(this.geometry, this.material);
-        return mesh;
+        material.lights = true;
+        material.uniforms.diffuse.value = color
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.name = name;
+        return mesh
+
     }
 }

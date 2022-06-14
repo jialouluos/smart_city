@@ -1,4 +1,4 @@
-export const RecedingEnclosure_vertexShader = /*glsl*/`
+const RecedingEnclosure_vertexShader = /*glsl*/`
 #define LAMBERT
 
 varying vec3 vLightFront;
@@ -52,3 +52,4 @@ void main() {
 	v_Uv = uv;
 }
 `;
+export default RecedingEnclosure_vertexShader

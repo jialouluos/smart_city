@@ -5,7 +5,9 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import dat, { GUI } from 'dat.gui'
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import gsap from "gsap"
-import GLSLLib from './GLSLLib'
+import ShaderLib from './libs/ShaderLib'
+import MathLib from "./libs/MathLib";
+import SpecialEffectsLib from "./libs/SpecialEffectsLib";
 import Track from './disposeManage'
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
 export default class Main {
@@ -68,7 +70,9 @@ export default class Main {
         };
     };
     rad2Deg = (rad: number) => rad * 180 / Math.PI;
-    static GLSLLib = GLSLLib;
+    static ShaderLib = ShaderLib;
+    static SpecialEffectsLib = SpecialEffectsLib;
+    static MathLib = MathLib;
     constructor(el: HTMLDivElement, debug: boolean = false) {
         /**
          * @el:挂载对象
@@ -111,13 +115,13 @@ export default class Main {
         this.modelLoaderByDraco.setDRACOLoader(draco);//创建Draco加载器
     }
     init() {
-        this.createScene();
-        this.createCamera('PerspectiveCamera');
-        this.createRenderer({});
+        this.createScene('', { gui: true, stats: true });
+        this.createCamera('PerspectiveCamera', new THREE.Vector3(0, 20, 40));
+        this.createRenderer({ alpha: true });
         this.createLight();
         this.createControls();
         this.addListeners();
-        this.createEvery();
+        this.onCreateMoment();
         this.setAnimate();
     }
 
@@ -296,7 +300,7 @@ export default class Main {
     }
 
     //加载其他
-    createEvery() {
+    onCreateMoment() {
     }
 
     //添加监听事件
@@ -348,9 +352,8 @@ export default class Main {
         }
         return isResizeNeeded;
     }
-
     //动画
-    update() {
+    onUpdateMoment() {
     }
     //销毁
     dispose() {
@@ -388,7 +391,7 @@ export default class Main {
         if (this.stats) {
             this.stats.update();
         }
-        this.update();
+        this.onUpdateMoment();
         if (this.composer) {
             this.composer.render();
         } else {
