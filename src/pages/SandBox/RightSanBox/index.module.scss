@@ -6,9 +6,27 @@
     z-index: 2;
     top: 0px;
     right: 0px;
-    opacity: 0.4;
-    display: none;
+    // display: none;
     height: 100%;
     width: 25%;
-    background-color: #ff00ff;
+
+    .select_botton {
+        position: absolute;
+        bottom: 0px;
+        border-radius: 5px;
+        width: 100%;
+        height: 40px;
+        background-color: aqua;
+    }
+
+    .display_box {
+        top: 0px;
+        position: absolute;
+        width: 100%;
+        height: calc(100% - 40px);
+        display: flex;
+        justify-content: center;
+
+        
+    }
 }

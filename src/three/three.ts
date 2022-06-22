@@ -1,85 +1,96 @@
 
 import * as  THREE from 'three';
 import Main from './Main';
-import BaseLineManage from './manages/BaseLineManage';
 import SpecialEffectsManage from './manages/SpecialEffectsManage';
+import TweenManage from './manages/TweenManage';
+import ParamsControlManage from './manages/ParamsControlManage';
 export default class City extends Main {
     modelManageGroup!: Map<string, THREE.Mesh>
-    lineManage!: BaseLineManage;
     translateBox !: THREE.Box3;
     SpecialEffectsManage: SpecialEffectsManage;
+    ModelGroups!: THREE.Group;
+    TweenManage!: TweenManage;
+    ParamsControlManage!: ParamsControlManage;
     constructor(el: HTMLDivElement, debug: boolean) {
         super(el, debug);
         this.modelManageGroup = new Map<string, THREE.Mesh>();
-        this.lineManage = new BaseLineManage();
         this.SpecialEffectsManage = new SpecialEffectsManage(this.time);
+        this.ParamsControlManage = new ParamsControlManage();
         this.translateBox = new THREE.Box3();
+        this.ModelGroups = new THREE.Group();
     }
-    init() {
-        super.init();//初始化渲染器以及场景
-        this.lineManage.init();//加载绘制线所需数据
+    init = () => {
+        this.createScene('', { gui: true, stats: true });
+        this.createCamera('PerspectiveCamera', new THREE.Vector3(88, 23, -80));
+        this.createRenderer({ alpha: true });
+        this.createLight();
+        this.createControls();
+        this.addListeners();
+        this.onCreateMoment();
+        this.setAnimate();
+        this.TweenManage = new TweenManage(this.scene, this.camera as THREE.PerspectiveCamera, this.container!);
+        this.initGui();
     }
     /**
      * @在创建渲染器时-钩子
      */
-    onCreateMoment() {//
+    onCreateMoment = () => {//
+        this.scene.add(this.ModelGroups);
         this.initEnvironmentMap();
+        this.SpecialEffectsManage.init();
         this.loadMainModel();
     }
     /**
      * @在更新时-钩子
      */
-    onUpdateMoment() {
+    onUpdateMoment = () => {
 
     }
     /**
      * @在主模型加载完毕之后-钩子
      */
-    onMainModelLoadCompleted() {
+    onMainModelLoadCompleted = () => {
         this.loadLine();
+        this.BindModelToMap();
         this.loadSpecialEffects();
+        this.onEveryIsReady();
+    }
+    /**
+     * @在一切都加载完毕时-钩子
+     */
+    onEveryIsReady = () => {
+        this.TweenManage.loadCameraRotation(100, new THREE.Vector2(40, 40))
     }
     /**
      * @加载特效
      */
-    loadSpecialEffects() {
+    loadSpecialEffects = () => {
+
     }
-    loadLine() {
-        const groups = new THREE.Group();
-        this.lineManage.lineTypes.forEach(e => {
-            this.lineManage.createLineGroup(e);
-            const group = this.lineManage.lineGroups.get(e);
-            const { min: { x, y, z } } = this.translateBox;
-            group && group.scale.set(0.1, 0.1, 0.1) && (group.rotation.x -= Math.PI * 0.5);
-            group && (group.position.x -= x) && (group.position.y -= y) && (group.position.z -= z);
-            groups.add(group!)
-        })
-        this.scene.add(groups)
-        console.log(this.scene)
+    loadLine = () => {
+        const lineGroups = this.SpecialEffectsManage.specialEffectsManage.get("cityStreamLine")!.ModelGroup;
+        const { min: { x, y, z } } = this.translateBox;
+        const { max: { x: x2, y: y2, z: z2 } } = this.translateBox;
+        lineGroups && lineGroups.scale.set(0.1, 0.1, 0.1) && (lineGroups.rotation.x -= Math.PI * 0.5);
+        lineGroups && (lineGroups.position.x -= (x + x2) / 2.0) && (lineGroups.position.y -= (y + y2) / 2.0) && (lineGroups.position.z -= (z + z2) / 2.0);
+        lineGroups.name = 'lineGroup';
+        this.ModelGroups.add(lineGroups);
+        const regionGroups = this.SpecialEffectsManage.specialEffectsManage.get("recedingFence")!.ModelGroup;
+        regionGroups.name = 'regionGroups';
+        this.ModelGroups.add(regionGroups);
     }
-    // onModelLoadAfter(box: THREE.Box3) {
-    //     this.modelLoaderByDraco.loadAsync('./model/line_d.glb').then(res => {
-    //         const model = res.scene;
-    //         this.scene.add(model);
-    //         model.scale.set(0.1, 0.1, 0.1);
-    //         model.rotation.x -= Math.PI * 0.5;
-    //         model.position.x -= box.min.x;
-    //         model.position.y -= box.min.y;
-    //         model.position.z -= box.min.z;
-    //     })
-    //     this.BindModelToMap();
-    //     this.correctModel();
-    // }
     /**
      * @修正模型
      */
-    correctModel() {
-        this.modelManageGroup.get('river')!.position.y += 0.9;
+    correctModel = () => {
+        this.modelManageGroup.get('river')!.position.z += 0.5;
+        this.modelManageGroup.get('lineGroup')!.position.y += 1;
+        this.modelManageGroup.get('ground')!.position.y -= 1;
     }
     /**
      * @获取场景中的模型
      */
-    BindModelToMap() {
+    BindModelToMap = () => {
         this.modelManageGroup.set(`ground`, this.scene.getObjectByName(`地面`) as THREE.Mesh)
         this.modelManageGroup.set(`river`, this.scene.getObjectByName(`河流`) as THREE.Mesh)
         this.modelManageGroup.set(`build`, this.scene.getObjectByName(`楼房`) as THREE.Mesh)
@@ -87,29 +98,31 @@ export default class City extends Main {
         this.modelManageGroup.set(`东方明珠`, this.scene.getObjectByName(`东方明珠`) as THREE.Mesh)
         this.modelManageGroup.set(`环球金融中心`, this.scene.getObjectByName(`环球金融中心`) as THREE.Mesh)
         this.modelManageGroup.set(`金茂大厦`, this.scene.getObjectByName(`金茂大厦`) as THREE.Mesh)
-        console.log(this.scene)
+        this.modelManageGroup.set(`lineGroup`, this.scene.getObjectByName(`lineGroup`) as THREE.Mesh)
+        this.correctModel()
     }
     /**
      * @用于加载City模型
      */
-    loadMainModel() {
+    loadMainModel = () => {
         this.modelLoaderByDraco.loadAsync('./model/city_d.glb').then(res => {
             const model = res.scene;
-            this.scene.add(model);
+            this.ModelGroups.add(model)
             model.scale.set(0.1, 0.1, 0.1);
             model.rotation.x -= Math.PI * 0.5;
             this.translateBox.expandByObject(model);
             const { min: { x, y, z } } = this.translateBox;
-            model.position.x -= x;
-            model.position.y -= y;
-            model.position.z -= z;
+            const { max: { x: x2, y: y2, z: z2 } } = this.translateBox;
+            model.position.x -= (x + x2) / 2.0;
+            model.position.y -= (y + y2) / 2.0;;
+            model.position.z -= (z + z2) / 2.0;;
             this.onMainModelLoadCompleted();
         })
     }
     /**
     * @生成天空盒
     */
-    initEnvironmentMap() {
+    initEnvironmentMap = () => {
 
         const envmapLoader = new THREE.CubeTextureLoader().setPath("./textures/cubeMaps/");
         const urlMapArray = new Array(6).fill('').map((item, index) => (index + 1) + '.jpg');
@@ -117,6 +130,29 @@ export default class City extends Main {
             map.mapping = THREE.CubeRefractionMapping;
             this.scene.background = map;
             this.scene.environment = map;
+        })
+    }
+    /**
+     * @初始化Gui
+     */
+    initGui = () => {
+        const obj = {
+            u_Number: 1,
+            u_Size: 6.0,
+            u_Speed: 0.03,
+            u_Length: 0.25,
+        }
+        this.gui!.add(obj, 'u_Number', 1, 10, 1).onChange((e: number) => {
+            this.SpecialEffectsManage.updatecityStreamLine({ flyLineCount: e, flyLineStyle: 0.2,flyLineSize:obj.u_Size,flyLineSpeed:obj.u_Speed,flyLineLength:obj.u_Length })
+        })
+        this.gui!.add(obj, 'u_Size', 1, 10, 0.1).onChange((e: number) => {
+            this.SpecialEffectsManage.updatecityStreamLine({ flyLineSize: e,flyLineStyle: 0.2,flyLineCount:obj.u_Number,flyLineSpeed:obj.u_Speed,flyLineLength:obj.u_Length})
+        })
+        this.gui!.add(obj, 'u_Speed', 0.01, 2, 0.01).onChange((e: number) => {
+            this.SpecialEffectsManage.updatecityStreamLine({ flyLineSpeed: e, flyLineStyle: 0.2,flyLineSize:obj.u_Size,flyLineCount:obj.u_Number,flyLineLength:obj.u_Length })
+        })
+        this.gui!.add(obj, 'u_Length', 0.01, 1.0, 0.01).onChange((e: number) => {
+            this.SpecialEffectsManage.updatecityStreamLine({ flyLineLength: e, flyLineStyle: 0.2,flyLineSize:obj.u_Size,flyLineSpeed:obj.u_Speed,flyLineCount:obj.u_Number })
         })
     }
 }

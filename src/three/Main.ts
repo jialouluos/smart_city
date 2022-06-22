@@ -14,7 +14,7 @@ export default class Main {
     //创建世界坐标轴及其他帮助调试的东西
     debug!: boolean;
     //canvas容器
-    container!: HTMLElement | null;
+    container!: HTMLDivElement | null;
     //场景
     scene!: THREE.Scene;
     //相机
@@ -62,7 +62,7 @@ export default class Main {
     //销毁管理
     track!: Track;
     //获取当前挂载对象宽高比
-    getAspect = (el: HTMLElement): number => el.clientWidth / el.clientHeight;
+    getAspect = (el: HTMLDivElement): number => el.clientWidth / el.clientHeight;
     getNormalizedMousePos = (e: MouseEvent | Touch) => {
         return {
             x: (e.clientX / window.innerWidth) * 2 - 1,
@@ -370,6 +370,9 @@ export default class Main {
             gl && gl.getExtension("WEBGL_lose_context");
             this.container!.removeChild(this.renderer.domElement);
             this.container!.removeChild(this.stats.domElement);
+            this.gui && document.querySelector(".main")!.remove();
+
+
         } catch (e) {
             console.log(e)
         }
@@ -386,7 +389,7 @@ export default class Main {
             this.time.value = this.clock.getElapsedTime()
         }
         if (this.controls) {
-            this.controls.update();
+            // this.controls.update();
         }
         if (this.stats) {
             this.stats.update();

@@ -1,0 +1,20 @@
+.canvas {
+    width: 100%;
+    height: 100%;
+
+    // background-color: rgb(213, 48, 48);
+    h1 {
+        position: relative;
+        top: 0px;
+        height: 70px;
+        text-align: center;
+        line-height: 70px;
+        
+        letter-spacing: 3px;
+        color: #d2d8e2;
+        -webkit-user-select: none;
+        user-select: none;
+
+    }
+
+}

@@ -1,8 +1,13 @@
 import RecedingFence from '../shader/渐隐围墙'
+import CityStreamLine from '../shader/路线流光'
 namespace SpecialEffectsLib {
     /**
-     * @渐隐围墙_shader特特效
+     * @渐隐围墙_shader特效
      */
     export const recedingFence = RecedingFence
+    /**
+     * @路线流光_shader特效
+     */
+    export const cityStreamLine = CityStreamLine
 };
 export default SpecialEffectsLib;
