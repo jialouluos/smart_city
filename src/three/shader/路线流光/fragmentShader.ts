@@ -15,7 +15,7 @@ void main(){
 		gl_FragColor = vec4(u_BackColor, 1.0);
 	}else {
 		if(v_PercentageSize<0.2){
-			if(v_Flag==0.1){
+			if(v_Flag==0.2){
 				gl_FragColor = vec4(u_BackColor, 1.0) ;
 			}else{
 				discard;
@@ -23,7 +23,7 @@ void main(){
 		}else{
 			gl_FragColor = vec4(u_Color, 1.0);
 		}
-	}        
-}  
+	}
+}
 `
 export default CityStreamLine_fragmentShader;

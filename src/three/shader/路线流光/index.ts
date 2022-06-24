@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import Main from '../../Main';
 import ShaderLib from '../../libs/ShaderLib'
+import Track from '../../disposeManage';
 
 export interface ICityStreamLine {
     flyLineSpeed?: number;
@@ -10,7 +11,7 @@ export interface ICityStreamLine {
     flyLineLength?: number;
     flyLineColor?: THREE.Color;
     flyLineBackgroudColor?: THREE.Color;
-    flyLineStyle?: 0.0 | 0.1 | 0.2;
+    flyLineStyle?: 0.1 | 0.2;
     name?: string
 }
 type T_cityStreamLineManage = Map<string, THREE.Group>;
@@ -57,17 +58,17 @@ export default class CityStreamLine {
         })
     }
     /**
-     * 
+     *
      * @param type  "路" | "地铁" | "隧道" | "通道" | "大道"
      * @param opations 飞线配置参数
      * @param manage cityStreamLineManage
      * @param state cityStreamLineState
-     * @returns 
+     * @returns
      */
-    public async createLineGroup(type: T_lineGroupType, opations: ICityStreamLine, manage: T_cityStreamLineManage, state: T_BaseState) {
+    public async createLineGroup(type: T_lineGroupType, opations: ICityStreamLine, manage: T_cityStreamLineManage, state: T_BaseState, style: "实线" | "飞线" | "融合", track: Track) {
         if (!this.isLoadComplete) {
             return setTimeout(() => {
-                this.createLineGroup(type, opations, manage, state)
+                this.createLineGroup(type, opations, manage, state, style, track)
             }, 100);
         }
         if (!this.drawData.has(type)) {
@@ -85,19 +86,33 @@ export default class CityStreamLine {
                     pointArray.push(x, y, 0);
                 })
                 if (pointArray.length > 4) {
-                    const line = this.creatFlyLine(pointArray, { name: children.name, ...opations });
-                    lineGroup.add(line)
-
+                    
+                    if (style === "实线") {
+                        const line = this.createLine(pointArray, { name: children.name, ...opations });
+                        lineGroup.add(line)
+                    } else {
+                        if (style === "飞线") {
+                            const line = this.creatFlyLine(pointArray, { name: children.name, flyLineStyle: 0.1, ...opations });
+                            lineGroup.add(line)
+                        } else {
+                            const line = this.creatFlyLine(pointArray, { name: children.name, flyLineStyle: 0.2, ...opations });
+                            lineGroup.add(line)
+                        }
+                    }
                 }
             })
+            // console.log(lineGroup)
             this.ModelGroup.add(lineGroup)
+            track.track(lineGroup)
             manage.set(type, lineGroup)
-            state.set(type, {})
+            state.set(type, { style })
+            state.set("current", { group: lineGroup, linetype:type })
         })
 
 
     }
-    private createLine(data: number[], color: THREE.Color | string = "#006666", name: string): THREE.Line {
+    private createLine(data: number[], options: { color?: THREE.Color | string, name?: string }): THREE.Line {
+        let { color = "#006666", name = "" } = options;
         typeof color === "string" && (color = new THREE.Color(color));
         const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(data), 3));
@@ -112,7 +127,7 @@ export default class CityStreamLine {
         return line;
     }
     private creatFlyLine(pointArray: number[], options: ICityStreamLine): THREE.Points<THREE.BufferGeometry, THREE.ShaderMaterial> {
-        const { flyLineSpeed = 1.0, pointCount = 10000, flyLineCount = 1.0, flyLineSize = 1.0, flyLineLength = 0.04, flyLineColor = new THREE.Color(69 / 255, 161 / 255, 218 / 255), flyLineBackgroudColor = new THREE.Color(24 / 255, 50 / 255, 85 / 255), flyLineStyle = 0.0, name = "" } = options;
+        const { flyLineSpeed = 0.16, pointCount = 10000, flyLineCount = 1.0, flyLineSize = 4, flyLineLength = 0.04, flyLineColor = new THREE.Color(69 / 255, 161 / 255, 218 / 255), flyLineBackgroudColor = new THREE.Color(24 / 255, 50 / 255, 85 / 255), flyLineStyle = 0.1, name = "" } = options;
         const vector3Array: THREE.Vector3[] = [];
         for (let i = 0, len = pointArray.length; i < len; i += 3) {
             vector3Array.push(new THREE.Vector3(pointArray[i], pointArray[i + 1], pointArray[i + 2]));
@@ -163,7 +178,7 @@ export default class CityStreamLine {
         return flyline;
     }
     public updateParams(manage: T_cityStreamLineManage, options: ICityStreamLine) {
-        const { flyLineSpeed = 1.0, flyLineCount = 1.0, flyLineSize = 1.0, flyLineLength = 0.04, flyLineColor = new THREE.Color(69 / 255, 161 / 255, 218 / 255), flyLineBackgroudColor = new THREE.Color(24 / 255, 50 / 255, 85 / 255), flyLineStyle = 0.0} = options;
+        const { flyLineSpeed = 0.16, flyLineCount = 1.0, flyLineSize = 4, flyLineLength = 0.04, flyLineColor = new THREE.Color(69 / 255, 161 / 255, 218 / 255), flyLineBackgroudColor = new THREE.Color(24 / 255, 50 / 255, 85 / 255), flyLineStyle = 0.0 } = options;
         const values = manage.values();
         for (let value of values) {
             value.children.forEach((child: any) => {
@@ -179,8 +194,10 @@ export default class CityStreamLine {
             })
         }
     }
-
-    dispose() {
+    disposeAll(track: Track) {
+        this.ModelGroup.children.forEach((child: any) => {
+            track.disTrackByGroup(child)
+        })
         this.drawData.clear();
     }
 

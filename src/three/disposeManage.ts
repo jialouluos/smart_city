@@ -56,8 +56,53 @@ export default class Track {
     }
     disTrack(obj: any) {
         this.sources.delete(obj);
+        if (obj instanceof THREE.Object3D) {
+            if (obj.parent) {
+                obj.parent.remove(obj);
+            }
+        }
+        obj.dispose && obj.dispose();
         return obj;
     }
+    disTrackByGroup(group: THREE.Group) {
+        if (group instanceof THREE.Group) {
+            group.parent && group.parent.remove(group);
+            this.sources.delete(group)
+            if (group?.children?.length !== 0) {
+                const iteator = group?.children.values()
+                for (let value of iteator) {
+                    this.sources.delete(value)
+                    let item = value as any;
+                    if (item.isMesh || item.isPoints || item.isLine) {
+                        this.disTrack(item.geometry)
+                        if (item.material) {
+                            for (let value of Object.values(item.material)) {
+                                if (value instanceof THREE.Texture) {
+                                    this.disTrack(value)
+                                }
+                            }
+                            if (item.material.uniforms) {
+                                for (let value of Object.values(item.material.uniforms)) {
+                                    if (value) {
+                                        const { realValue } = (value as any);
+                                        if (realValue instanceof THREE.Texture) {
+                                            this.disTrack(realValue)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        this.disTrack(item.material)
+                    }
+                    else if (item instanceof THREE.Group || item.isGroup) {
+                        this.disTrackByGroup(item)
+                    }
+                }
+                group.clear();
+            }
+        }
+    }
+
     allDisTrack() {
         for (let item of this.sources) {
             if (item instanceof THREE.Object3D) {

@@ -65,7 +65,7 @@ export default class City extends Main {
      * @加载特效
      */
     loadSpecialEffects = () => {
-
+        this.SpecialEffectsManage.createbuildingVirtualization(this.modelManageGroup);
     }
     loadLine = () => {
         const lineGroups = this.SpecialEffectsManage.specialEffectsManage.get("cityStreamLine")!.ModelGroup;
@@ -91,14 +91,24 @@ export default class City extends Main {
      * @获取场景中的模型
      */
     BindModelToMap = () => {
+     
         this.modelManageGroup.set(`ground`, this.scene.getObjectByName(`地面`) as THREE.Mesh)
         this.modelManageGroup.set(`river`, this.scene.getObjectByName(`河流`) as THREE.Mesh)
-        this.modelManageGroup.set(`build`, this.scene.getObjectByName(`楼房`) as THREE.Mesh)
+        this.modelManageGroup.set(`楼房`, this.scene.getObjectByName(`楼房`) as THREE.Mesh)
         this.modelManageGroup.set(`上海中心大厦`, this.scene.getObjectByName(`上海中心大厦`) as THREE.Mesh)
         this.modelManageGroup.set(`东方明珠`, this.scene.getObjectByName(`东方明珠`) as THREE.Mesh)
         this.modelManageGroup.set(`环球金融中心`, this.scene.getObjectByName(`环球金融中心`) as THREE.Mesh)
         this.modelManageGroup.set(`金茂大厦`, this.scene.getObjectByName(`金茂大厦`) as THREE.Mesh)
-        this.modelManageGroup.set(`lineGroup`, this.scene.getObjectByName(`lineGroup`) as THREE.Mesh)
+        this.modelManageGroup.set('lineGroup', this.scene.getObjectByName(`lineGroup`) as THREE.Mesh)
+        this.modelManageGroup.set('cityGroup', this.scene.getObjectByName(`cityGroup`) as THREE.Mesh)
+        this.modelManageGroup.set('regionGroup', this.scene.getObjectByName(`regionGroups`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_1_1`, this.scene.getObjectByName(`city_1_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_2_1`, this.scene.getObjectByName(`city_2_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_3_1`, this.scene.getObjectByName(`city_3_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_4_1`, this.scene.getObjectByName(`city_4_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_5_1`, this.scene.getObjectByName(`city_5_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_6_1`, this.scene.getObjectByName(`city_6_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`build`, this.scene.getObjectByName(`build`) as THREE.Mesh)
         this.correctModel()
     }
     /**
@@ -107,6 +117,7 @@ export default class City extends Main {
     loadMainModel = () => {
         this.modelLoaderByDraco.loadAsync('./model/city_d.glb').then(res => {
             const model = res.scene;
+            model.name = "cityGroup"
             this.ModelGroups.add(model)
             model.scale.set(0.1, 0.1, 0.1);
             model.rotation.x -= Math.PI * 0.5;
@@ -114,8 +125,8 @@ export default class City extends Main {
             const { min: { x, y, z } } = this.translateBox;
             const { max: { x: x2, y: y2, z: z2 } } = this.translateBox;
             model.position.x -= (x + x2) / 2.0;
-            model.position.y -= (y + y2) / 2.0;;
-            model.position.z -= (z + z2) / 2.0;;
+            model.position.y -= (y + y2) / 2.0;
+            model.position.z -= (z + z2) / 2.0;
             this.onMainModelLoadCompleted();
         })
     }
@@ -136,24 +147,7 @@ export default class City extends Main {
      * @初始化Gui
      */
     initGui = () => {
-        const obj = {
-            u_Number: 1,
-            u_Size: 6.0,
-            u_Speed: 0.03,
-            u_Length: 0.25,
-        }
-        this.gui!.add(obj, 'u_Number', 1, 10, 1).onChange((e: number) => {
-            this.SpecialEffectsManage.updatecityStreamLine({ flyLineCount: e, flyLineStyle: 0.2,flyLineSize:obj.u_Size,flyLineSpeed:obj.u_Speed,flyLineLength:obj.u_Length })
-        })
-        this.gui!.add(obj, 'u_Size', 1, 10, 0.1).onChange((e: number) => {
-            this.SpecialEffectsManage.updatecityStreamLine({ flyLineSize: e,flyLineStyle: 0.2,flyLineCount:obj.u_Number,flyLineSpeed:obj.u_Speed,flyLineLength:obj.u_Length})
-        })
-        this.gui!.add(obj, 'u_Speed', 0.01, 2, 0.01).onChange((e: number) => {
-            this.SpecialEffectsManage.updatecityStreamLine({ flyLineSpeed: e, flyLineStyle: 0.2,flyLineSize:obj.u_Size,flyLineCount:obj.u_Number,flyLineLength:obj.u_Length })
-        })
-        this.gui!.add(obj, 'u_Length', 0.01, 1.0, 0.01).onChange((e: number) => {
-            this.SpecialEffectsManage.updatecityStreamLine({ flyLineLength: e, flyLineStyle: 0.2,flyLineSize:obj.u_Size,flyLineSpeed:obj.u_Speed,flyLineCount:obj.u_Number })
-        })
+
     }
 }
 

@@ -1,3 +1,4 @@
+import BuildingVirtualization from '../shader/楼房虚化'
 import RecedingFence from '../shader/渐隐围墙'
 import CityStreamLine from '../shader/路线流光'
 namespace SpecialEffectsLib {
@@ -9,5 +10,9 @@ namespace SpecialEffectsLib {
      * @路线流光_shader特效
      */
     export const cityStreamLine = CityStreamLine
+    /**
+    * @楼房虚化
+    */
+    export const buildingVirtualization = BuildingVirtualization
 };
 export default SpecialEffectsLib;

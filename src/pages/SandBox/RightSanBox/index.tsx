@@ -12,7 +12,6 @@ export default function RightSanBox(props: IProps) {
     const [State, setState] = useState(true)
     return (
         <div className={style.right_box}>
-            
             <div className={style.display_box}>
                 {State ? <CanvasControls setCanvasParams={setCanvasParams} CanvasParams={CanvasParams} /> : <DataDisplay />}
             </div>
