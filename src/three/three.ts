@@ -48,6 +48,7 @@ z: -367219.78762105067
     onCreateMoment = () => {//
         this.scene.add(this.ModelGroups);
         this.initEnvironmentMap();
+
         this.SpecialEffectsManage.init();
         this.loadMainModel();
     }
@@ -71,24 +72,19 @@ z: -367219.78762105067
      * @在一切都加载完毕时-钩子
      */
     onEveryIsReady = () => {
-        this.TweenManage.loadCameraRotation(100, new THREE.Vector2(40, 40))
+        this.TweenManage.loadCameraRotation(100, new THREE.Vector2(0, 0))
     }
     /**
      * @加载特效
      */
     loadSpecialEffects = () => {
-        // const geometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
-        // const material = new THREE.MeshBasicMaterial({ color: "#ff0000" })
-        // const mesh = new THREE.Mesh(geometry, material)
-        // this.scene.add(mesh)
-        this.SpecialEffectsManage.createbuildingVirtualization(this.modelManageGroup);
+        this.SpecialEffectsManage.createbuildingSpecialEffects(this.modelManageGroup);
         this.SpecialEffectsManage.createwaterWave(this.modelManageGroup.get('river')!, this.scene);
     }
     loadLine = () => {
         const lineGroups = this.SpecialEffectsManage.specialEffectsManage.get("cityStreamLine")!.ModelGroup;
         this.ModelGroups.add(lineGroups);
         const regionGroups = this.SpecialEffectsManage.specialEffectsManage.get("recedingFence")!.ModelGroup;
-        regionGroups.name = 'regionGroup';
         this.ModelGroups.add(regionGroups);
     }
     /**
@@ -96,7 +92,7 @@ z: -367219.78762105067
      */
     correctModel = () => {
         // this.modelManageGroup.get('lineGroup')!.position.y += 30;
-        this.modelManageGroup.get('ground')!.position.y -= 1;
+        // this.modelManageGroup.get('ground')!.position.y -= 1;
 
     }
     /**

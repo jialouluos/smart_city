@@ -33,6 +33,7 @@ export default class RecedingFence {
         this.drawData = new Map<T_Type, T_drawData>();
         this.isLoadComplete = true;
         this.ModelGroup = new THREE.Group();
+        this.ModelGroup.name = 'regionGroup';
     }
     /**
      * @进行数据的读取

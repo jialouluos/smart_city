@@ -2,10 +2,9 @@ import RecedingEnclosure_vertexShader from '../shader/渐隐围墙/vertexShader'
 import RecedingEnclosure_fragmentShader from '../shader/渐隐围墙/fragmentShader'
 import CityStreamLine_vertexShader from '../shader/路线流光/vertexShader';
 import CityStreamLine_fragmentShader from '../shader/路线流光/fragmentShader';
-import { BuildingVirtualization_fragmentShader } from '../shader/楼房虚化/fragmentShader';
-import { BuildingVirtualization_vertexShader } from '../shader/楼房虚化/vertexShader';
-import WaterWave_vertexShader from '../shader/水波/vertexShader';
-import WaterWave_fragmentShader from '../shader/水波/fragmentShader';
+import BuildingSpecialEffects_vertexShader from '../shader/建筑上下扫光、建筑扩散光波/vertexShader';
+import BuildingSpecialEffects_fragmentShader from '../shader/建筑上下扫光、建筑扩散光波/fragmentShader';
+
 namespace ShaderLib {
     /**
      * @渐隐围墙
@@ -22,18 +21,11 @@ namespace ShaderLib {
         fs: CityStreamLine_fragmentShader
     }
     /**
-     * @楼房虚化
+     * @建筑上下扫光建筑扩散光波
      */
-    export const BuildingVirtualization = {
-        vs: BuildingVirtualization_vertexShader,
-        fs: BuildingVirtualization_fragmentShader
-    }
-    /**
-     * @水波
-     */
-    export const WaterWave = {
-        vs: WaterWave_vertexShader,
-        fs: WaterWave_fragmentShader
+    export const BuildingSpecialEffects = {
+        vs: BuildingSpecialEffects_vertexShader,
+        fs: BuildingSpecialEffects_fragmentShader
     }
 };
 export default ShaderLib;

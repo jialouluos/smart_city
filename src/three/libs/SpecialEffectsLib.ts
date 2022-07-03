@@ -1,5 +1,5 @@
 import WaterWave from '../shader/水波';
-import BuildingVirtualization from '../shader/楼房虚化'
+import BuildingSpecialEffects from '../shader/建筑上下扫光、建筑扩散光波'
 import RecedingFence from '../shader/渐隐围墙'
 import CityStreamLine from '../shader/路线流光'
 namespace SpecialEffectsLib {
@@ -14,7 +14,7 @@ namespace SpecialEffectsLib {
     /**
     * @楼房虚化
     */
-    export const buildingVirtualization = BuildingVirtualization
+    export const buildingSpecialEffects = BuildingSpecialEffects
     /**
      * @水波
      */

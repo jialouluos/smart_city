@@ -213,7 +213,7 @@ export default class Main {
     //创建光源
     createLight(count?: 1 | 2) {
         this.scene.add(new THREE.AmbientLight('#fff'));
-        const dirLight = new THREE.DirectionalLight('#fff', 0.5);
+        const dirLight = new THREE.DirectionalLight('#fff', 0.3);
         dirLight.position.set(200, 300, 400);
         this.scene.add(dirLight);
         if (count && count > 1) {
