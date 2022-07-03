@@ -6,6 +6,17 @@ import TweenManage from './manages/TweenManage';
 import ParamsControlManage from './manages/ParamsControlManage';
 export default class City extends Main {
     modelManageGroup!: Map<string, THREE.Mesh>
+    /**
+     * max: Vector3
+x: 1353225.7317487632
+y: 66.28731078178433
+z: -365618.22435773845
+min: Vector3
+isVector3: true
+x: 1351724.2173374298
+y: -0.8316316560008878
+z: -367219.78762105067
+     */
     translateBox !: THREE.Box3;
     SpecialEffectsManage: SpecialEffectsManage;
     ModelGroups!: THREE.Group;
@@ -16,7 +27,7 @@ export default class City extends Main {
         this.modelManageGroup = new Map<string, THREE.Mesh>();
         this.SpecialEffectsManage = new SpecialEffectsManage(this.time);
         this.ParamsControlManage = new ParamsControlManage();
-        this.translateBox = new THREE.Box3();
+        this.translateBox = new THREE.Box3(new THREE.Vector3(1351724.2173374298, -0.8316316560008878, -367219.78762105067), new THREE.Vector3(1353225.7317487632, 66.28731078178433, -365618.22435773845));
         this.ModelGroups = new THREE.Group();
     }
     init = () => {
@@ -50,6 +61,7 @@ export default class City extends Main {
      * @在主模型加载完毕之后-钩子
      */
     onMainModelLoadCompleted = () => {
+        // this.loadRiver();
         this.loadLine();
         this.BindModelToMap();
         this.loadSpecialEffects();
@@ -65,49 +77,51 @@ export default class City extends Main {
      * @加载特效
      */
     loadSpecialEffects = () => {
+        // const geometry = new THREE.PlaneGeometry(1000, 1000, 100, 100);
+        // const material = new THREE.MeshBasicMaterial({ color: "#ff0000" })
+        // const mesh = new THREE.Mesh(geometry, material)
+        // this.scene.add(mesh)
         this.SpecialEffectsManage.createbuildingVirtualization(this.modelManageGroup);
+        this.SpecialEffectsManage.createwaterWave(this.modelManageGroup.get('river')!, this.scene);
     }
     loadLine = () => {
         const lineGroups = this.SpecialEffectsManage.specialEffectsManage.get("cityStreamLine")!.ModelGroup;
-        const { min: { x, y, z } } = this.translateBox;
-        const { max: { x: x2, y: y2, z: z2 } } = this.translateBox;
-        lineGroups && lineGroups.scale.set(0.1, 0.1, 0.1) && (lineGroups.rotation.x -= Math.PI * 0.5);
-        lineGroups && (lineGroups.position.x -= (x + x2) / 2.0) && (lineGroups.position.y -= (y + y2) / 2.0) && (lineGroups.position.z -= (z + z2) / 2.0);
-        lineGroups.name = 'lineGroup';
         this.ModelGroups.add(lineGroups);
         const regionGroups = this.SpecialEffectsManage.specialEffectsManage.get("recedingFence")!.ModelGroup;
-        regionGroups.name = 'regionGroups';
+        regionGroups.name = 'regionGroup';
         this.ModelGroups.add(regionGroups);
     }
     /**
      * @修正模型
      */
     correctModel = () => {
-        this.modelManageGroup.get('river')!.position.z += 0.5;
-        this.modelManageGroup.get('lineGroup')!.position.y += 1;
+        // this.modelManageGroup.get('lineGroup')!.position.y += 30;
         this.modelManageGroup.get('ground')!.position.y -= 1;
+
     }
     /**
      * @获取场景中的模型
      */
     BindModelToMap = () => {
-     
+
         this.modelManageGroup.set(`ground`, this.scene.getObjectByName(`地面`) as THREE.Mesh)
-        this.modelManageGroup.set(`river`, this.scene.getObjectByName(`河流`) as THREE.Mesh)
-        this.modelManageGroup.set(`楼房`, this.scene.getObjectByName(`楼房`) as THREE.Mesh)
+        this.modelManageGroup.set(`river`, this.scene.getObjectByName(`river`) as THREE.Mesh)
         this.modelManageGroup.set(`上海中心大厦`, this.scene.getObjectByName(`上海中心大厦`) as THREE.Mesh)
         this.modelManageGroup.set(`东方明珠`, this.scene.getObjectByName(`东方明珠`) as THREE.Mesh)
         this.modelManageGroup.set(`环球金融中心`, this.scene.getObjectByName(`环球金融中心`) as THREE.Mesh)
         this.modelManageGroup.set(`金茂大厦`, this.scene.getObjectByName(`金茂大厦`) as THREE.Mesh)
         this.modelManageGroup.set('lineGroup', this.scene.getObjectByName(`lineGroup`) as THREE.Mesh)
         this.modelManageGroup.set('cityGroup', this.scene.getObjectByName(`cityGroup`) as THREE.Mesh)
-        this.modelManageGroup.set('regionGroup', this.scene.getObjectByName(`regionGroups`) as THREE.Mesh)
-        this.modelManageGroup.set(`city_1_1`, this.scene.getObjectByName(`city_1_1`) as THREE.Mesh)
-        this.modelManageGroup.set(`city_2_1`, this.scene.getObjectByName(`city_2_1`) as THREE.Mesh)
-        this.modelManageGroup.set(`city_3_1`, this.scene.getObjectByName(`city_3_1`) as THREE.Mesh)
-        this.modelManageGroup.set(`city_4_1`, this.scene.getObjectByName(`city_4_1`) as THREE.Mesh)
-        this.modelManageGroup.set(`city_5_1`, this.scene.getObjectByName(`city_5_1`) as THREE.Mesh)
-        this.modelManageGroup.set(`city_6_1`, this.scene.getObjectByName(`city_6_1`) as THREE.Mesh)
+        this.modelManageGroup.set('regionGroup', this.scene.getObjectByName(`regionGroup`) as THREE.Mesh)
+        this.modelManageGroup.set('车辆消失点', this.scene.getObjectByName(`车辆消失点`) as THREE.Mesh)
+        this.modelManageGroup.set('车道轨迹', this.scene.getObjectByName(`车道轨迹`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_1`, this.scene.getObjectByName(`city_1`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_2`, this.scene.getObjectByName(`city_2`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_3`, this.scene.getObjectByName(`city_3`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_4`, this.scene.getObjectByName(`city_4`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_5`, this.scene.getObjectByName(`city_5`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_6`, this.scene.getObjectByName(`city_6`) as THREE.Mesh)
+        this.modelManageGroup.set(`city_7`, this.scene.getObjectByName(`city_7`) as THREE.Mesh)
         this.modelManageGroup.set(`build`, this.scene.getObjectByName(`build`) as THREE.Mesh)
         this.correctModel()
     }
@@ -115,18 +129,11 @@ export default class City extends Main {
      * @用于加载City模型
      */
     loadMainModel = () => {
-        this.modelLoaderByDraco.loadAsync('./model/city_d.glb').then(res => {
+        this.modelLoaderByDraco.loadAsync('./model/city.glb').then(res => {
             const model = res.scene;
-            model.name = "cityGroup"
-            this.ModelGroups.add(model)
-            model.scale.set(0.1, 0.1, 0.1);
-            model.rotation.x -= Math.PI * 0.5;
-            this.translateBox.expandByObject(model);
-            const { min: { x, y, z } } = this.translateBox;
-            const { max: { x: x2, y: y2, z: z2 } } = this.translateBox;
-            model.position.x -= (x + x2) / 2.0;
-            model.position.y -= (y + y2) / 2.0;
-            model.position.z -= (z + z2) / 2.0;
+            model.name = "cityGroup";
+            this.ModelGroups.add(model);
+            console.log(this.scene);
             this.onMainModelLoadCompleted();
         })
     }

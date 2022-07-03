@@ -128,6 +128,7 @@ export default class Main {
     //创建场景，并使用debug参数
     createScene(sceneName?: string, debugParams?: { helper?: boolean, stats?: boolean, gui?: boolean }) {
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.Fog("#fff", 0.25, 1000)
         if (this.debug && debugParams) {
             debugParams?.helper && this.scene.add(new THREE.AxesHelper(100));
             debugParams?.stats && (this.stats = Stats());

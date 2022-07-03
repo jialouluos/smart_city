@@ -11,6 +11,7 @@ export default class Track {
     constructor() {
         this.sources = new Set();
     }
+
     track(obj: any) {
         if (!obj) return obj;
         if (Array.isArray(obj)) {
@@ -66,40 +67,40 @@ export default class Track {
     }
     disTrackByGroup(group: THREE.Group) {
         if (group instanceof THREE.Group) {
-            group.parent && group.parent.remove(group);
-            this.sources.delete(group)
-            if (group?.children?.length !== 0) {
-                const iteator = group?.children.values()
-                for (let value of iteator) {
-                    this.sources.delete(value)
-                    let item = value as any;
-                    if (item.isMesh || item.isPoints || item.isLine) {
-                        this.disTrack(item.geometry)
-                        if (item.material) {
-                            for (let value of Object.values(item.material)) {
-                                if (value instanceof THREE.Texture) {
-                                    this.disTrack(value)
-                                }
-                            }
-                            if (item.material.uniforms) {
-                                for (let value of Object.values(item.material.uniforms)) {
-                                    if (value) {
-                                        const { realValue } = (value as any);
-                                        if (realValue instanceof THREE.Texture) {
-                                            this.disTrack(realValue)
-                                        }
-                                    }
+            const values = [...group.children.values()];
+            for (let child of values) {
+                if (child instanceof THREE.Mesh || child instanceof THREE.Line || child instanceof THREE.Points) {
+                    this.disTrack(child.geometry)
+                }
+                if ((child as THREE.Mesh).material) {
+                    const item: any = child
+                    for (let value of Object.values(item.material)) {
+                        if (value instanceof THREE.Texture) {
+                            this.disTrack(value)
+                        }
+                    }
+                    if (item.material.uniforms) {
+                        for (let value of Object.values(item.material.uniforms)) {
+                            if (value) {
+                                const { realValue } = (value as any);
+                                if (realValue instanceof THREE.Texture) {
+                                    this.disTrack(realValue)
                                 }
                             }
                         }
-                        this.disTrack(item.material)
                     }
-                    else if (item instanceof THREE.Group || item.isGroup) {
-                        this.disTrackByGroup(item)
-                    }
+                    this.disTrack((child as THREE.Object3D & { material: any }).material)
                 }
-                group.clear();
+                if (child instanceof THREE.Group) {
+                    this.disTrackByGroup(child)
+                }
             }
+            for (let child of values) {
+                this.sources.has(child) && this.sources.delete(child);
+            }
+            group.parent && group.parent.remove(group);//?从父节点移除该节点
+            this.sources.delete(group);//?从Set中移除该节点
+            group.clear();
         }
     }
 

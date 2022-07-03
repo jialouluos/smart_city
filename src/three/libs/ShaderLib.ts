@@ -4,6 +4,8 @@ import CityStreamLine_vertexShader from '../shader/路线流光/vertexShader';
 import CityStreamLine_fragmentShader from '../shader/路线流光/fragmentShader';
 import { BuildingVirtualization_fragmentShader } from '../shader/楼房虚化/fragmentShader';
 import { BuildingVirtualization_vertexShader } from '../shader/楼房虚化/vertexShader';
+import WaterWave_vertexShader from '../shader/水波/vertexShader';
+import WaterWave_fragmentShader from '../shader/水波/fragmentShader';
 namespace ShaderLib {
     /**
      * @渐隐围墙
@@ -25,6 +27,13 @@ namespace ShaderLib {
     export const BuildingVirtualization = {
         vs: BuildingVirtualization_vertexShader,
         fs: BuildingVirtualization_fragmentShader
+    }
+    /**
+     * @水波
+     */
+    export const WaterWave = {
+        vs: WaterWave_vertexShader,
+        fs: WaterWave_fragmentShader
     }
 };
 export default ShaderLib;

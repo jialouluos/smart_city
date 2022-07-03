@@ -3,7 +3,7 @@ import Head from '../../components/Head';
 import Canvas from './Canvas';
 import LeftSanBox from './LeftSanBox';
 import RightSanBox from './RightSanBox';
-type T_lineGroupType = "路" | "地铁" | "隧道" | "通道" | "大道";
+type T_lineGroupType = "路" | "地铁" | "隧道" | "大道";
 type T_RouteStyle = "实线" | "飞线" | "融合";
 type T_Type = "route" | "region" | "style" | "";
 export interface ICanvasControlsParams {

@@ -9,7 +9,7 @@ export interface IBuildingVirtualization {
     DiffuseColor?: THREE.Color;//?楼房颜色
 }
 /**
- * @楼房虚化_shader特特效
+ * @楼房虚化_shader特效
  */
 export default class BuildingVirtualization {
     time: {
@@ -46,12 +46,12 @@ export default class BuildingVirtualization {
         })
         this.material.lights = true;
         this.material.uniforms.opacity.value = Opacity;
-        ModelGroup.get(`city_1_1`)!.material = this.material
-        ModelGroup.get(`city_2_1`)!.material = this.material
-        ModelGroup.get(`city_3_1`)!.material = this.material
-        ModelGroup.get(`city_4_1`)!.material = this.material
-        ModelGroup.get(`city_5_1`)!.material = this.material
-        ModelGroup.get(`city_6_1`)!.material = this.material
-        ModelGroup.get(`build`)!.material = this.material
+        ModelGroup.get(`city_1`)!.material = this.material
+        ModelGroup.get(`city_2`)!.material = this.material
+        ModelGroup.get(`city_3`)!.material = this.material
+        ModelGroup.get(`city_4`)!.material = this.material
+        ModelGroup.get(`city_5`)!.material = this.material
+        ModelGroup.get(`city_6`)!.material = this.material
+        ModelGroup.get(`city_7`)!.material = this.material
     }
 }
