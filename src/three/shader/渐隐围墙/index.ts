@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import ShaderLib from '../../libs/ShaderLib'
 import CityStaticDataLib from '../../libs/CityStaticDataLib'
 
-export  interface IRecedingFence {
+export interface IRecedingFence {
     scale?: number,
     u_a?: number,
     u_b?: number,

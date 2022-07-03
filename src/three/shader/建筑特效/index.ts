@@ -10,6 +10,8 @@ export interface IBuildingSpecialEffects {
     spreadRegion?: number;//?建筑扩散效果范围
     spreadSize?: number;//?建筑扩散范围
     spreadColor?: THREE.Color;//?扩散带颜色
+    gradientColor?: THREE.Color;//?高度渐变颜色
+    high?: number;//?高度阈值
 }
 /**
  * @建筑上下扫光、建筑扩散光波_shader特效
@@ -25,7 +27,7 @@ export default class BuildingSpecialEffects {
         this.ModelGroup = new THREE.Group();
     }
     useSpecialEffectComposer(ModelGroup: Map<string, THREE.Mesh>, options: IBuildingSpecialEffects) {
-        const { Speed = 0.3, Opacity = 0.7, diffuseColor = new THREE.Color("#06090A"), scanRegion = 0.3, scanColor = new THREE.Color("#01c3ff"), spreadRegion = 800, spreadSize = 11000, spreadColor = new THREE.Color("#ffffff"), } = options;
+        const { Speed = 0.3, Opacity = 0.7, diffuseColor = new THREE.Color("#06090A"), scanRegion = 0.3, scanColor = new THREE.Color("#01c3ff"), spreadRegion = 800, spreadSize = 11000, spreadColor = new THREE.Color("#ffffff"), gradientColor = new THREE.Color("#ffffff"), high = 0.5 } = options;
         this.material = new THREE.ShaderMaterial({
             vertexShader: Main.ShaderLib.BuildingSpecialEffects.vs,
             fragmentShader: Main.ShaderLib.BuildingSpecialEffects.fs,
@@ -55,6 +57,12 @@ export default class BuildingSpecialEffects {
                 },
                 u_SpreadColor: {
                     value: spreadColor
+                },
+                u_GradientColor: {
+                    value: gradientColor
+                },
+                u_High: {
+                    value: high
                 }
             },
             transparent: true,

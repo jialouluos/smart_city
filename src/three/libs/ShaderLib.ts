@@ -2,8 +2,8 @@ import RecedingEnclosure_vertexShader from '../shader/渐隐围墙/vertexShader'
 import RecedingEnclosure_fragmentShader from '../shader/渐隐围墙/fragmentShader'
 import CityStreamLine_vertexShader from '../shader/路线流光/vertexShader';
 import CityStreamLine_fragmentShader from '../shader/路线流光/fragmentShader';
-import BuildingSpecialEffects_vertexShader from '../shader/建筑上下扫光、建筑扩散光波/vertexShader';
-import BuildingSpecialEffects_fragmentShader from '../shader/建筑上下扫光、建筑扩散光波/fragmentShader';
+import BuildingSpecialEffects_vertexShader from '../shader/建筑特效/vertexShader';
+import BuildingSpecialEffects_fragmentShader from '../shader/建筑特效/fragmentShader';
 
 namespace ShaderLib {
     /**
@@ -21,7 +21,10 @@ namespace ShaderLib {
         fs: CityStreamLine_fragmentShader
     }
     /**
-     * @建筑上下扫光建筑扩散光波
+     * @建筑上下扫光
+     * @建筑扩散光波
+     * @高度颜色渐变
+     * @建筑高度渐增
      */
     export const BuildingSpecialEffects = {
         vs: BuildingSpecialEffects_vertexShader,

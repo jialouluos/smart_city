@@ -1,8 +1,8 @@
 import * as THREE from 'three'
 import Main from '../Main'
-import RecedingFence,{ IRecedingFence } from '../shader/渐隐围墙'
-import CityStreamLine ,{ ICityStreamLine }from '../shader/路线流光';
-import BuildingSpecialEffects from '../shader/建筑上下扫光、建筑扩散光波';
+import RecedingFence, { IRecedingFence } from '../shader/渐隐围墙'
+import CityStreamLine, { ICityStreamLine } from '../shader/路线流光';
+import BuildingSpecialEffects from '../shader/建筑特效';
 import WaterWave from '../shader/水波';
 import City from '../three';
 export type T_RegionType = "region_1" | "region_2" | "region_3" | "region_4" | "region_5" | "region_6";
@@ -51,8 +51,8 @@ export default class SpecialEffectsManage {
         this.initwaterWave();
     }
     /**
-     * @渐隐围墙
-     */
+    * @渐隐围墙
+    */
     initrecedingFenceManages() {
         this.specialEffectsManage.set("recedingFence", new Main.SpecialEffectsLib.recedingFence(this.time));
         this.createrecedingFence("region_1")
@@ -64,8 +64,8 @@ export default class SpecialEffectsManage {
         (this.specialEffectsManage.get("recedingFence") as RecedingFence)!.updateParams(this.recedingFenceManages, options)
     }
     /**
-     * @路线流光
-     */
+    * @路线流光
+    */
     initcityStreamLineManages() {
         this.specialEffectsManage.set("cityStreamLine", new Main.SpecialEffectsLib.cityStreamLine(this.time));
         this.cityStreamLineStates.set("路", { color: new THREE.Color("#00ffff") });
@@ -80,8 +80,8 @@ export default class SpecialEffectsManage {
         (this.specialEffectsManage.get("cityStreamLine") as CityStreamLine)!.updateParams(routerType, this.cityStreamLineManages, this.cityStreamLineStates, options)
     }
     /**
-   * @楼房虚化通道处理
-   */
+    * @建筑特效
+    */
     initbuildingSpecialEffects() {
         this.specialEffectsManage.set("buildingSpecialEffects", new Main.SpecialEffectsLib.buildingSpecialEffects(this.time));
     }
@@ -89,8 +89,8 @@ export default class SpecialEffectsManage {
         (this.specialEffectsManage.get("buildingSpecialEffects") as BuildingSpecialEffects)!.useSpecialEffectComposer(ModelGroup, {});
     }
     /**
-  * @水波
-  */
+    * @水波
+    */
     initwaterWave() {
         this.specialEffectsManage.set("waterWave", new Main.SpecialEffectsLib.waterWave(this.time));
     }
