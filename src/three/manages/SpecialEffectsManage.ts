@@ -1,54 +1,49 @@
 import * as THREE from 'three'
 import Main from '../Main'
-import RecedingFence, { IRecedingFence } from '../shader/渐隐围墙'
-import CityStreamLine, { ICityStreamLine } from '../shader/路线流光';
-import BuildingSpecialEffects from '../shader/建筑特效';
-import WaterWave from '../shader/水波';
 import City from '../three';
+import RecedingFence, { IRecedingFence } from '../shader/渐隐围墙'
+import CityLine, { ICityLine } from '../shader/线路流光';
+import BuildingSpecialEffects from '../shader/建筑特效';
+import BuildWireframe from '../shader/建筑线框';
+import WaterWave from '../shader/水波';
 export type T_RegionType = "region_1" | "region_2" | "region_3" | "region_4" | "region_5" | "region_6";
 export type T_LineGroupType = "路" | "地铁" | "隧道" | "大道";
 export type T_BaseManage = Map<string, THREE.Mesh>;
 export type T_BaseState = Map<T_LineGroupType, Record<string, any>>;
-export type T_CityStreamLineManage = Map<T_LineGroupType, THREE.Object3D>;
-export type T_CityStreamLineState = Map<T_LineGroupType | "current", Record<string, any>>;
+export type T_CityLineManage = Map<T_LineGroupType, THREE.Object3D>;
+export type T_CityLineState = Map<T_LineGroupType | "current", Record<string, any>>;
 
-type T_SpecialEffectsKeys = "recedingFence" | "cityStreamLine" | "buildingSpecialEffects" | "waterWave";
-type T_SpecialEffectsValues = RecedingFence | CityStreamLine | BuildingSpecialEffects | WaterWave;
+type T_SpecialEffectsKeys = "recedingFence" | "cityLine" | "buildingSpecialEffects" | "waterWave" | "buildWireframe";
+type T_SpecialEffectsValues = RecedingFence | CityLine | BuildingSpecialEffects | WaterWave | BuildWireframe;
 type T_SpecialEffectsManage = Map<T_SpecialEffectsKeys, T_SpecialEffectsValues>
 /**
  * @负责管理特效
  */
 export default class SpecialEffectsManage {
     /**
-     * @K 每个特效的实例
-     * @V 每个特效的实例创建的实例
+     * @K 每个特效的标识
+     * @V 每个特效创建的实例
      */
     specialEffectsManage: T_SpecialEffectsManage;
-    /**
-     * @K 标记名
-     * @V 特效几何
-     */
-    recedingFenceManages: T_BaseManage;
-    /**
-     * @状态记录
-     */
-    recedingFenceStates: T_BaseState;
-    cityStreamLineManages: T_CityStreamLineManage;
-    cityStreamLineStates: T_CityStreamLineState;
+    recedingFenceManages: T_BaseManage;//?渐隐围墙
+    recedingFenceStates: T_BaseState;//?渐隐围墙
+    cityLineManages: T_CityLineManage;//?城市路线
+    cityLineStates: T_CityLineState;//?城市路线
     time !: { value: number }
     constructor(time: { value: number }) {
         this.time = time;
         this.recedingFenceManages = new Map();
         this.recedingFenceStates = new Map();
-        this.cityStreamLineManages = new Map();
-        this.cityStreamLineStates = new Map();
+        this.cityLineManages = new Map();
+        this.cityLineStates = new Map();
         this.specialEffectsManage = new Map();
     }
     init() {
         this.initrecedingFenceManages();
-        this.initcityStreamLineManages();
+        this.initcityLineManages();
         this.initbuildingSpecialEffects();
         this.initwaterWave();
+        this.initbuildWireframe();
     }
     /**
     * @渐隐围墙
@@ -66,18 +61,18 @@ export default class SpecialEffectsManage {
     /**
     * @路线流光
     */
-    initcityStreamLineManages() {
-        this.specialEffectsManage.set("cityStreamLine", new Main.SpecialEffectsLib.cityStreamLine(this.time));
-        this.cityStreamLineStates.set("路", { color: new THREE.Color("#00ffff") });
-        this.cityStreamLineStates.set("地铁", { color: new THREE.Color("#cc00ff") });
-        this.cityStreamLineStates.set("隧道", { color: new THREE.Color("#ff9900") });
-        this.cityStreamLineStates.set("大道", { color: new THREE.Color("#d9ff00") });
+    initcityLineManages() {
+        this.specialEffectsManage.set("cityLine", new Main.SpecialEffectsLib.cityLine(this.time));
+        this.cityLineStates.set("路", { color: new THREE.Color("#00ffff") });
+        this.cityLineStates.set("地铁", { color: new THREE.Color("#cc00ff") });
+        this.cityLineStates.set("隧道", { color: new THREE.Color("#ff9900") });
+        this.cityLineStates.set("大道", { color: new THREE.Color("#d9ff00") });
     }
-    createcityStreamLine(routerType: T_LineGroupType, style: "实线" | "飞线" | "融合", city: City) {
-        (this.specialEffectsManage.get("cityStreamLine") as CityStreamLine)!.createLineGroup(routerType, { color: this.cityStreamLineStates.get(routerType)!.color }, this.cityStreamLineManages, this.cityStreamLineStates, style, city);
+    createcityLine(routerType: T_LineGroupType, style: "实线" | "飞线" | "融合", city: City) {
+        (this.specialEffectsManage.get("cityLine") as CityLine)!.createLineGroup(routerType, { color: this.cityLineStates.get(routerType)!.color }, this.cityLineManages, this.cityLineStates, style, city);
     }
-    updatecityStreamLine(routerType: T_LineGroupType, options: ICityStreamLine) {
-        (this.specialEffectsManage.get("cityStreamLine") as CityStreamLine)!.updateParams(routerType, this.cityStreamLineManages, this.cityStreamLineStates, options)
+    updatecityLine(routerType: T_LineGroupType, options: ICityLine) {
+        (this.specialEffectsManage.get("cityLine") as CityLine)!.updateParams(routerType, this.cityLineManages, this.cityLineStates, options)
     }
     /**
     * @建筑特效
@@ -96,5 +91,20 @@ export default class SpecialEffectsManage {
     }
     createwaterWave(Mesh: THREE.Mesh, Scene: THREE.Scene) {
         (this.specialEffectsManage.get("waterWave") as WaterWave)!.useSpecialEffectComposer(Mesh, {}, Scene);
+    }
+    /**
+    * @建筑线框
+    */
+    initbuildWireframe() {
+        this.specialEffectsManage.set("buildWireframe", new Main.SpecialEffectsLib.buildWireframe(this.time));
+    }
+    createbuildWireframe(ModelGroup: Map<string, THREE.Mesh>, Scene: THREE.Scene) {
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_1`)!, {}, Scene);
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_2`)!, {}, Scene);
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_3`)!, {}, Scene);
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_4`)!, {}, Scene);
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_5`)!, {}, Scene);
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_6`)!, {}, Scene);
+        (this.specialEffectsManage.get("buildWireframe") as BuildWireframe)!.useSpecialEffectComposer(ModelGroup.get(`city_7`)!, {}, Scene);
     }
 }

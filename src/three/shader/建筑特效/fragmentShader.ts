@@ -17,22 +17,32 @@ float mysmoothstep(float x) {
     return (x < 0.5) ? sqrt(0.5 * x) : 1.0 - sqrt(0.5 - 0.5 * x);
 }
 void main(){
-	//!扩散
+	//!扩散波
 	vec2 ori_position = vec2(0.0);//?原点
     vec2 cur_position = v_Position.xy;//?计算点
 	vec3 col = u_BuildColor;//?初始为建筑颜色
+    float gradient =  max(0.8,sqrt(abs(v_Position.z/300.0)));
     float dis = distance(ori_position,cur_position);//?计算距离
     float region = fract((v_Time + 32.0) * u_Speed) * u_SpreadSize;//?扩散范围 0~u_SpreadSize
     float spread_low_region = region - u_SpreadRegion / 2.0;//?最小值
     float spread_top_region = region + u_SpreadRegion / 2.0;//?最大值
     if(dis < spread_top_region  && dis > spread_low_region){
         //?处于该范围
-        col = mix(u_SpreadColor,col,1.0-sin((spread_top_region - dis) / u_SpreadRegion * PI));
+        col = mix(u_SpreadColor,col,1.0-sin((spread_top_region - dis) / u_SpreadRegion * PI)) * gradient;
+    }
+    //!扫描带
+    float point_to_line_dis =  (cur_position.x  - cur_position.y) / sqrt(2.0);
+    float point_to_line_region = (fract(v_Time * u_Speed) -0.5)*2.0 * u_SpreadSize;
+    float point_to_line_low_region = point_to_line_region - u_SpreadRegion / 2.0;
+    float point_to_line_top_region = point_to_line_region + u_SpreadRegion / 2.0;
+    if(point_to_line_dis < point_to_line_top_region  && point_to_line_dis > point_to_line_low_region){
+        //?处于该范围
+        col = mix(u_SpreadColor,col,1.0-sin((point_to_line_top_region - point_to_line_dis) / u_SpreadRegion * PI)) * gradient;
     }
 	//!高度颜色渐变
 	float gradient_percent = v_Position.z/300.0;
 	col = mix(col,u_GradientColor,gradient_percent);
-	//!扫描
+	//!上下扫描
     float percent  = v_Position.z/300.0;
     float scan_low_region = fract(v_Time * u_Speed) * (1.0 + mysmoothstep(percent) - percent) * (1.0 + u_ScanRegion) - u_ScanRegion; //?[-u_ScanRegion,1.0]
     float scan_top_region = scan_low_region + u_ScanRegion;//?[0.0-1.0 + u_ScanRegion]

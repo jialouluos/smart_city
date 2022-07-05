@@ -79,10 +79,12 @@ z: -367219.78762105067
      */
     loadSpecialEffects = () => {
         this.SpecialEffectsManage.createbuildingSpecialEffects(this.modelManageGroup);
+        this.SpecialEffectsManage.createbuildWireframe(this.modelManageGroup, this.scene);
         this.SpecialEffectsManage.createwaterWave(this.modelManageGroup.get('river')!, this.scene);
+
     }
     loadLine = () => {
-        const lineGroups = this.SpecialEffectsManage.specialEffectsManage.get("cityStreamLine")!.ModelGroup;
+        const lineGroups = this.SpecialEffectsManage.specialEffectsManage.get("cityLine")!.ModelGroup;
         this.ModelGroups.add(lineGroups);
         const regionGroups = this.SpecialEffectsManage.specialEffectsManage.get("recedingFence")!.ModelGroup;
         this.ModelGroups.add(regionGroups);
